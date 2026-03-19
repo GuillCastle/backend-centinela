@@ -1,0 +1,22 @@
+nstalar java SDK 23
+se crea una carpeta xxxxxxx
+luego se instala esto 
+npm install @openapitools/openapi-generator-cli -g
+y luego esto con
+npx openapi-generator-cli version-manager set 7.9.0
+
+
+//real
+npx @openapitools/openapi-generator-cli generate -i api.json -g typescript-angular -o api
+
+
+https://download.oracle.com/java/23/archive/jdk-23.0.1_windows-x64_bin.exe
+
+
+
+query para desactivar existencias 0
+SELECT producto, SUM(existencia) AS total_existencia, productos.estado
+FROM ExistenciaProducto inner join 
+productos on productos.id = ExistenciaProducto.Producto
+GROUP BY producto, productos.Estado
+HAVING SUM(existencia) > 0;

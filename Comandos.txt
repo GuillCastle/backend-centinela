@@ -1,0 +1,20 @@
+               nombre
+add-migration Initial
+
+Update-Database 
+
+
+oracle
+Scaffold-DbContext "User Id= sigm;Password=sigm;Data Source=10.1.3.124:1521/DESAIGSS;" Oracle.EntityFrameworkCore -OutputDir Models -Tables SIGM.SII_CAMAS
+
+sql server
+
+Scaffold-DbContext "Data Source=SQL5100.site4now.net;Initial Catalog=db_a8b8d7_dbcorporacioncast;User Id=db_a8b8d7_dbcorporacioncast_admin;Password=Legion1995@.;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Tables Sucursales
+
+//castilo
+Scaffold-DbContext "Data Source=SQL5100.site4now.net;Initial Catalog=db_a8b8d7_dbcorporacioncast;User Id=db_a8b8d7_dbcorporacioncast_admin;Password=Legion1995@.;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force para traer todos los modelos actualizados
+
+
+////kiness
+
+Scaffold-DbContext "Data Source=SQL5107.site4now.net;Initial Catalog=db_a8b8d7_kiness;User Id=db_a8b8d7_kiness_admin;Password=Legion1995@.;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force
