@@ -7,3 +7,4 @@
 /BackendCastilloB/obj/
 **/bin/
 **/obj/
+appsettings*.json
