@@ -6,6 +6,6 @@ namespace Backend.DTOs.Login
     {
         public string verificador {  get; set; }
         public string api_token { get; set; }
-        public DateTime refreshToken { get; set; }
+        public string refreshToken { get; set; }
     }
 }

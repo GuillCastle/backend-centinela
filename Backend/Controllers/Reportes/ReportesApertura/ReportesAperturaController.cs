@@ -1,4 +1,4 @@
-﻿using Backend.DTOs.Apertura;
+﻿
 using Backend.DTOs.Reportes;
 using Backend.Repositorios.Reportes.ReportesApertura;
 using Microsoft.AspNetCore.Mvc;

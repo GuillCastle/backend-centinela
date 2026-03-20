@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Backend.DTOs;
-using Backend.DTOs.Producto;
+using Backend.DTOs.Login;
 using Backend.DTOs.Rol;
 using Backend.DTOs.Usuario;
 using Backend.DTOs.Utils;
@@ -8,8 +8,11 @@ using Backend.Entidades;
 using Backend.Repositorios.Roles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using System.Drawing;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -20,12 +23,14 @@ namespace Backend.Repositorios.Usuarios
         private readonly ILogger<RepositorioUsuario> logger;
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
+        private readonly IConfiguration configuration;
 
-        public RepositorioUsuario(ILogger<RepositorioUsuario> logger, ApplicationDbContext context, IMapper mapper)
+        public RepositorioUsuario(ILogger<RepositorioUsuario> logger, ApplicationDbContext context, IMapper mapper, IConfiguration configuration)
         {
             this.logger = logger;
             this.context = context;
             this.mapper = mapper;
+            this.configuration = configuration;
         }
 
         public async Task<ActionResult<List<UsuarioDTO>>> get()
@@ -588,6 +593,8 @@ namespace Backend.Repositorios.Usuarios
                     string base64 = Convert.ToBase64String(bytes);
                     usuarioid.ruta = $"data:image/{Path.GetExtension(usuarioid.ruta).Replace(".", "")};base64,{base64}";
                 }
+
+
                 return usuarioid;
             }
             catch (Exception ex)
@@ -637,6 +644,96 @@ namespace Backend.Repositorios.Usuarios
             }
         }
 
+        public async Task<ActionResult<RefreshTokenResponseDTO>> refresh([FromBody] RefreshTokenRequestDTO request)
+        {
+            using (var transaction = await context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var refreshTokenGuardado = await context.Set<RefreshToken>()
+                        .FirstOrDefaultAsync(x =>
+                            x.Token == request.RefreshToken &&
+                            !x.Revocado);
+
+                    if (refreshTokenGuardado == null)
+                    {
+                        return new UnauthorizedObjectResult(new { message = "Refresh token inválido." });
+                    }
+
+                    if (refreshTokenGuardado.FechaExpiracion <= DateTime.UtcNow)
+                    {
+                        return new UnauthorizedObjectResult(new { message = "Refresh token expirado." });
+                    }
+
+                    var usuario = await context.Set<Usuario>()
+                        .FirstOrDefaultAsync(x => x.Codigo == refreshTokenGuardado.IdUsuario);
+
+                    if (usuario == null)
+                    {
+                        return new UnauthorizedObjectResult(new { message = "Usuario no encontrado." });
+                    }
+
+                    var nuevoAccessToken = GenerarAccessToken(usuario.Codigo, usuario.NombreUsuario);
+                    var nuevoRefreshToken = GenerarRefreshToken();
+
+                    refreshTokenGuardado.Revocado = true;
+
+                    var nuevoRegistroRefresh = new RefreshToken
+                    {
+                        IdUsuario = usuario.Codigo,
+                        Token = nuevoRefreshToken,
+                        FechaCreacion = DateTime.UtcNow,
+                        FechaExpiracion = DateTime.UtcNow.AddDays(1),
+                        Revocado = false
+                    };
+
+                    context.Add(nuevoRegistroRefresh);
+
+                    await context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    return new RefreshTokenResponseDTO
+                    {
+                        Token = nuevoAccessToken,
+                        RefreshToken = nuevoRefreshToken
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    return new ObjectResult(new { message = ex.Message })
+                    {
+                        StatusCode = 500
+                    };
+                }
+            }
+        }
+
+        private string GenerarAccessToken(int idUsuario, string nombreUsuario)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, idUsuario.ToString()),
+                new Claim(ClaimTypes.Name, nombreUsuario)
+            };
+
+            var llave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["llavejwt"]));
+            var creds = new SigningCredentials(llave, SecurityAlgorithms.HmacSha256);
+
+            var expiracion = DateTime.UtcNow.AddDays(1);
+
+            var token = new JwtSecurityToken(issuer: null, audience: null, claims: claims,
+                expires: expiracion, signingCredentials: creds);
+
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private string GenerarRefreshToken()
+        {
+            var randomBytes = RandomNumberGenerator.GetBytes(64);
+            return Convert.ToBase64String(randomBytes);
+        }
 
     }
 }

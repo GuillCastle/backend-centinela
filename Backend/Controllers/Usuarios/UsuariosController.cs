@@ -1,5 +1,4 @@
 ﻿using Backend.DTOs;
-using Backend.DTOs.Producto;
 using Backend.DTOs.Rol;
 using Backend.DTOs.Usuario;
 using Backend.DTOs.Utils;
@@ -17,6 +16,7 @@ namespace Backend.Controllers.Usuarios
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UsuariosController : ControllerBase
     {
+
         private readonly IRepositorioUsuario repositorioUsuario;
         public UsuariosController(IRepositorioUsuario repositoriousuario)
         {
@@ -178,6 +178,20 @@ namespace Backend.Controllers.Usuarios
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("refresh")]
+        public async Task<ActionResult<RefreshTokenResponseDTO>> refresh([FromBody] RefreshTokenRequestDTO refreshToken)
+        {
+
+            try
+            {
+                return await repositorioUsuario.refresh(refreshToken);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
         }
 

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Backend.DTOs.Departamento;
-using Backend.DTOs.Producto;
 using Backend.DTOs.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

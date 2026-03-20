@@ -11,7 +11,4 @@ public partial class Departamento
 
     public int Pais { get; set; }
 
-    public virtual ICollection<Cliente> Clientes { get; set; } = new List<Cliente>();
-
-    public virtual ICollection<Proveedore> Proveedores { get; set; } = new List<Proveedore>();
 }

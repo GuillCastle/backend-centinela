@@ -87,12 +87,18 @@ namespace Backend
                 options.Filters.Add(typeof(ParsearBadRequests));
             }).ConfigureApiBehaviorOptions(BehaviorBadRequests.Parsear);
 
+            var allowedOrigins = configRoot
+            .GetSection("Cors:AllowedOrigins")
+            .Get<string[]>() ?? [];
+
+
             services.AddCors(options =>
             {
-                var frontendURL = configRoot.GetValue<string>("frontend_url");
-                options.AddDefaultPolicy(builder =>
+                options.AddDefaultPolicy(policy =>
                 {
-                    builder.WithOrigins(frontendURL).AllowAnyMethod().AllowAnyHeader();
+                    policy.WithOrigins(allowedOrigins)
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
                 });
             });
 

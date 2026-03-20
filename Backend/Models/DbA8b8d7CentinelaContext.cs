@@ -1,19 +1,16 @@
-﻿using Backend.Entidades;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
-namespace Backend;
+namespace Backend.Models;
 
-public partial class ApplicationDbContext : DbContext
+public partial class DbA8b8d7CentinelaContext : DbContext
 {
-    internal object proveedores;
-
-    public ApplicationDbContext()
+    public DbA8b8d7CentinelaContext()
     {
     }
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    public DbA8b8d7CentinelaContext(DbContextOptions<DbA8b8d7CentinelaContext> options)
         : base(options)
     {
     }
@@ -41,16 +38,11 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<UsuarioPermiso> UsuarioPermisos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.EnableSensitiveDataLogging();
-        //optionsBuilder.AddInterceptors(_interceptor);
-    }
-
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=SQL5105.site4now.net;Initial Catalog=db_a8b8d7_centinela;User Id=db_a8b8d7_centinela_admin;Password=OrianaViktor1995@.;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
-
         modelBuilder.Entity<Departamento>(entity =>
         {
             entity.HasKey(e => e.Codigo);
@@ -107,7 +99,7 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.ToTable("RefreshToken");
 
-            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
             entity.Property(e => e.FechaExpiracion).HasColumnType("datetime");
             entity.Property(e => e.IdUsuario).HasColumnName("idUsuario");
@@ -206,7 +198,7 @@ public partial class ApplicationDbContext : DbContext
         });
 
         OnModelCreatingPartial(modelBuilder);
-
     }
+
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

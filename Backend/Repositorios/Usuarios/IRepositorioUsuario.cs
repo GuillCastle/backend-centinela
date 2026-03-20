@@ -18,6 +18,7 @@ namespace Backend.Repositorios.Usuarios
         Task<ActionResult<List<UsuarioPermisoDTO>>> obtenerpermisosusuario(int codigo);
         Task<ActionResult<List<RolPermisoDTO>>> obtenerrolpermiso(string usuario);
         Task<ActionResult<string>> post([FromForm] CreacionUsuarioDTO usuariocreacion);
+        Task<ActionResult<RefreshTokenResponseDTO>> refresh([FromForm] RefreshTokenRequestDTO refreshToken);
         Task<ActionResult<string>> reiniciarclave(int codigo, [FromBody] ReiniciarClaveUsuarioDTO reiniciarclave);
         Task<ActionResult<UsuarioModeloLogin>> verificar_usuario(string usuario);
     }

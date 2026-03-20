@@ -33,10 +33,6 @@ public partial class Empresa
 
     public int? Nivel { get; set; }
 
-    public virtual ICollection<AperturaInventario> AperturaInventarios { get; set; } = new List<AperturaInventario>();
-
-    public virtual ICollection<Compra> Compras { get; set; } = new List<Compra>();
-
     public virtual ICollection<Sucursale> Sucursales { get; set; } = new List<Sucursale>();
 
     public virtual ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();

@@ -1,4 +1,4 @@
-﻿using Backend.DTOs.Clientes;
+﻿
 using Backend.DTOs.Shared;
 using Backend.DTOs.Utils;
 using Backend.Entidades;
@@ -41,90 +41,6 @@ namespace Backend.Controllers.Shared
             }
             catch (Exception ex)
             {   
-                return BadRequest(ex.Message);
-
-            }
-        }
-
-        [HttpGet("obtenerdatoscertificadornit/{nit}/{entidad:int}/{sucursal:int}/{tipo:int}")]
-        public async Task<ActionResult<RespuestaNitDpiInfileDTO>> obtenerdatoscertificadornit(string nit, int entidad, int sucursal, int tipo)
-        {
-            try
-            {
-                return await repositorioShared.obtenerdatoscertificadornit(nit, entidad, sucursal, tipo);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-
-            }
-        }
-
-        [HttpGet("obtenerdatoscertificadordpi/{dpi}/{entidad:int}/{sucursal:int}/{tipo:int}")]
-        public async Task<ActionResult<RespuestaNitDpiInfileDTO>> obtenerdatoscertificadordpi(string dpi, int entidad, int sucursal, int tipo)
-        {
-            try
-            {
-                return await repositorioShared.obtenerdatoscertificadordpi(dpi, entidad, sucursal, tipo);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-
-            }
-        }
-
-        [HttpGet("validaciondpiclienteproveedor/{dpi}/{tipo:int}")]
-        public async Task<ActionResult<RespuestaNitDpiInfileDTO>> validacionDpiClienteProveedor(string dpi, int tipo)
-        {
-            try
-            {
-                return await repositorioShared.validacionDpiClienteProveedor(dpi, tipo);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-
-            }
-        }
-
-        [HttpGet("validacionnitclienteproveedor/{nit}/{tipo:int}")]
-        public async Task<ActionResult<RespuestaNitDpiInfileDTO>> ValidacioNitClienteProveedor(string nit, int tipo)
-        {
-            try
-            {
-                return await repositorioShared.ValidacioNitClienteProveedor(nit, tipo);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-
-            }
-        }
-
-        [HttpGet("selectcombustible")]
-        public async Task<ActionResult<List<SelectFormulario>>> selectcombustible()
-        {
-            try
-            {
-                return await repositorioShared.selectcombustible();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-
-            }
-        }
-
-        [HttpGet("obtenerdatoscombustible/{codigo:int}")]
-        public async Task<ActionResult<Combustible>> obtenerdatoscombustible(int codigo)
-        {
-            try
-            {
-                return await repositorioShared.obtenerdatoscombustible(codigo);
-            }
-            catch (Exception ex)
-            {
                 return BadRequest(ex.Message);
 
             }

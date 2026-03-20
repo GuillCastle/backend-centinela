@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Backend.DTOs.Login;
-using Backend.DTOs.Marca;
 using Backend.DTOs.Rol;
 using Backend.DTOs.Usuario;
 using Backend.Entidades;
@@ -40,7 +39,7 @@ namespace Backend.Repositorios.Login
                     {
                         verificador = "error en el login",
                         api_token = "",
-                        refreshToken = DateTime.Now,
+                        refreshToken = "",
                     };
                 }
 
@@ -64,7 +63,7 @@ namespace Backend.Repositorios.Login
                     {
                         verificador = "Usuario o contraseña incorrecto, verifique su información o comuniquese con el administrador",
                         api_token = "",
-                        refreshToken = DateTime.Now,
+                        refreshToken = "",
                     };
                 }
 
@@ -76,12 +75,23 @@ namespace Backend.Repositorios.Login
                     {
                         verificador = "Usuario o contraseña incorrecto, verifique su información o comuniquese con el administrador",
                         api_token = "",
-                        refreshToken = DateTime.Now,
+                        refreshToken = "-",
                     };
                 }
 
                 RespuestaAutenticacion respuestaAutenticacion = new RespuestaAutenticacion();
                 respuestaAutenticacion = await ContruirToken(credenciales);
+
+                RefreshToken refresh = new RefreshToken();
+                refresh.IdUsuario = usuariovalidacion.Codigo;
+                refresh.Token = respuestaAutenticacion.api_token;
+                refresh.FechaCreacion = DateTime.UtcNow;
+                refresh.FechaExpiracion = DateTime.UtcNow.AddDays(1);
+                refresh.Revocado = false;
+
+                context.Add(refresh);
+                await context.SaveChangesAsync();
+
                 return respuestaAutenticacion;
             }
             catch (Exception ex)
@@ -106,17 +116,23 @@ namespace Backend.Repositorios.Login
 
             var token = new JwtSecurityToken(issuer: null, audience: null, claims: claims,
                 expires: expiracion, signingCredentials: creds);
+            var refreshToken = GenerarRefreshToken();
+
 
             return new RespuestaAutenticacion()
             {
                 verificador = "1",
                 api_token = new JwtSecurityTokenHandler().WriteToken(token),
-                refreshToken = expiracion
+                refreshToken = refreshToken
             };  
 
         }
 
-        
+        private string GenerarRefreshToken()
+        {
+            var randomBytes = RandomNumberGenerator.GetBytes(64);
+            return Convert.ToBase64String(randomBytes);
+        }
 
 
     }

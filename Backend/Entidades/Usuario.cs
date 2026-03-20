@@ -33,11 +33,7 @@ public partial class Usuario
 
     public int? Sucursal { get; set; }
 
-    public virtual ICollection<Cliente> Clientes { get; set; } = new List<Cliente>();
-
     public virtual Empresa? EntidadNavigation { get; set; }
-
-    public virtual ICollection<Proveedore> Proveedores { get; set; } = new List<Proveedore>();
 
     public virtual Rol RolNavigation { get; set; } = null!;
 

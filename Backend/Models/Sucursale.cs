@@ -47,10 +47,6 @@ public partial class Sucursale
 
     public string? LlaveFirma { get; set; }
 
-    public virtual ICollection<AperturaInventario> AperturaInventarios { get; set; } = new List<AperturaInventario>();
-
-    public virtual ICollection<Compra> Compras { get; set; } = new List<Compra>();
-
     public virtual Empresa EmpresaCodigoNavigation { get; set; } = null!;
 
     public virtual ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
