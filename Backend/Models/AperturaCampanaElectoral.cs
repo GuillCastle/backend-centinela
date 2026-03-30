@@ -17,5 +17,5 @@ public partial class AperturaCampanaElectoral
 
     public int Usuario { get; set; }
 
-    public int FechaRegistro { get; set; }
+    public DateTime FechaRegistro { get; set; }
 }

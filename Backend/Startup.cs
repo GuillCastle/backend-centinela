@@ -137,7 +137,7 @@ namespace Backend
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                Path.Combine(@"D:\imagenesCastillo")),
+                Path.Combine(@"E:\imagenesCastillo")),
                 RequestPath = "/uploads"
             });
 
