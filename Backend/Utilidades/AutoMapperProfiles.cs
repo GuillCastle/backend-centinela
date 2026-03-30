@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Backend.DTOs;
+using Backend.DTOs.AperturaCampanaElectoral;
 using Backend.DTOs.Rol;
 
 using Backend.DTOs.Usuario;
@@ -32,7 +33,10 @@ namespace Backend.Utilidades
 
             CreateMap<CreacionUsuarioPermisoDTO, UsuarioPermiso>().ReverseMap();
 
-            
+            CreateMap<AperturaCampanaElectoral, AperturaCampanaElectoralDTO>().ReverseMap();
+            CreateMap<CreacionAperturaCampanaElectoralDTO, AperturaCampanaElectoral>().ReverseMap();
+
+
 
         }
     }

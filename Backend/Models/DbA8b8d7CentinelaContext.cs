@@ -15,9 +15,15 @@ public partial class DbA8b8d7CentinelaContext : DbContext
     {
     }
 
+    public virtual DbSet<AperturaCampanaElectoral> AperturaCampanaElectorals { get; set; }
+
     public virtual DbSet<Departamento> Departamentos { get; set; }
 
+    public virtual DbSet<DetalleUsuarioCuadrilla> DetalleUsuarioCuadrillas { get; set; }
+
     public virtual DbSet<Empresa> Empresas { get; set; }
+
+    public virtual DbSet<EncabezadoCuadrilla> EncabezadoCuadrillas { get; set; }
 
     public virtual DbSet<Municipio> Municipios { get; set; }
 
@@ -33,16 +39,28 @@ public partial class DbA8b8d7CentinelaContext : DbContext
 
     public virtual DbSet<Sucursale> Sucursales { get; set; }
 
+    public virtual DbSet<TipoCuadrilla> TipoCuadrillas { get; set; }
+
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
     public virtual DbSet<UsuarioPermiso> UsuarioPermisos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=SQL5105.site4now.net;Initial Catalog=db_a8b8d7_centinela;User Id=db_a8b8d7_centinela_admin;Password=OrianaViktor1995@.;");
+        => optionsBuilder.UseSqlServer("Data Source=SQL5105.site4now.net;Initial Catalog=db_a8b8d7_centinela;User Id=db_a8b8d7_centinela_admin;Password=JayceViktor1301@.;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AperturaCampanaElectoral>(entity =>
+        {
+            entity.HasKey(e => e.Codigo);
+
+            entity.ToTable("AperturaCampanaElectoral");
+
+            entity.Property(e => e.FechaFin).HasColumnType("datetime");
+            entity.Property(e => e.FechaInicio).HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<Departamento>(entity =>
         {
             entity.HasKey(e => e.Codigo);
@@ -50,6 +68,30 @@ public partial class DbA8b8d7CentinelaContext : DbContext
             entity.ToTable("Departamento");
 
             entity.Property(e => e.Descripcion).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<DetalleUsuarioCuadrilla>(entity =>
+        {
+            entity.HasKey(e => e.Codigo);
+
+            entity.ToTable("DetalleUsuarioCuadrilla");
+
+            entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
+            entity.HasOne(d => d.CuadrillaNavigation).WithMany(p => p.DetalleUsuarioCuadrillas)
+                .HasForeignKey(d => d.Cuadrilla)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DetalleUsuarioCuadrilla_EncabezadoCuadrilla");
+
+            entity.HasOne(d => d.TipoCuadrillaNavigation).WithMany(p => p.DetalleUsuarioCuadrillas)
+                .HasForeignKey(d => d.TipoCuadrilla)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DetalleUsuarioCuadrilla_TipoCuadrilla");
+
+            entity.HasOne(d => d.UsuarioNavigation).WithMany(p => p.DetalleUsuarioCuadrillas)
+                .HasForeignKey(d => d.Usuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DetalleUsuarioCuadrilla_Usuario");
         });
 
         modelBuilder.Entity<Empresa>(entity =>
@@ -61,6 +103,13 @@ public partial class DbA8b8d7CentinelaContext : DbContext
             entity.Property(e => e.CodigoEmpresa).HasMaxLength(250);
             entity.Property(e => e.Nombre).HasMaxLength(250);
             entity.Property(e => e.Representante).HasMaxLength(250);
+        });
+
+        modelBuilder.Entity<EncabezadoCuadrilla>(entity =>
+        {
+            entity.HasKey(e => e.Codigo);
+
+            entity.ToTable("EncabezadoCuadrilla");
         });
 
         modelBuilder.Entity<Municipio>(entity =>
@@ -146,6 +195,13 @@ public partial class DbA8b8d7CentinelaContext : DbContext
             entity.Property(e => e.LlaveSucursal).HasColumnName("LLaveSucursal");
 
             entity.HasOne(d => d.EmpresaCodigoNavigation).WithMany(p => p.Sucursales).HasForeignKey(d => d.EmpresaCodigo);
+        });
+
+        modelBuilder.Entity<TipoCuadrilla>(entity =>
+        {
+            entity.HasKey(e => e.Codigo);
+
+            entity.ToTable("TipoCuadrilla");
         });
 
         modelBuilder.Entity<Usuario>(entity =>

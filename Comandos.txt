@@ -21,4 +21,4 @@ Scaffold-DbContext "Data Source=SQL5107.site4now.net;Initial Catalog=db_a8b8d7_k
 
 //// centinela
 
-Scaffold-DbContext "Data Source=SQL5105.site4now.net;Initial Catalog=db_a8b8d7_centinela;User Id=db_a8b8d7_centinela_admin;Password=OrianaViktor1995@.;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force
+Scaffold-DbContext "Data Source=SQL5105.site4now.net;Initial Catalog=db_a8b8d7_centinela;User Id=db_a8b8d7_centinela_admin;Password=JayceViktor1301@.;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force
