@@ -13,7 +13,5 @@ public partial class EncabezadoCuadrilla
 
     public int UsuarioRegistro { get; set; }
 
-    public DateTime FechaRegistro { get; set; }
-
     public virtual ICollection<DetalleUsuarioCuadrilla> DetalleUsuarioCuadrillas { get; set; } = new List<DetalleUsuarioCuadrilla>();
 }

@@ -119,6 +119,7 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Codigo);
 
             entity.ToTable("EncabezadoCuadrilla");
+            entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<Municipio>(entity =>

@@ -12,7 +12,7 @@ namespace Backend.Controllers.AperturaCampanaElectoral
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AperturaCampanaElectoralController : ControllerBase
     {
         private readonly IRepositorioAperturaCampanaElectoral _repositorioCampana;

@@ -33,6 +33,7 @@ using Backend.Repositorios.Shared;
 using Backend.Repositorios.Reportes.ReportesApertura;
 using Backend.Repositorios.EmpresaSucursal;
 using Backend.Repositorios.AperturaCampanaElectoral;
+using Backend.Repositorios.Cuadrillas;
 
 
 
@@ -64,6 +65,7 @@ namespace Backend
             services.AddScoped<IRepositorioReportesApertura, RepositorioReportesApertura>();
             services.AddScoped<IRepositorioEmpresaSucursal, RepositorioEmpresaSucursal>();
             services.AddScoped<IRepositorioAperturaCampanaElectoral, RepositorioAperturaCampanaElectoral>();
+            services.AddScoped<IRepositorioCuadrillas, RepositorioCuadrillas>();
             services.AddAutoMapper(typeof(Startup));
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configRoot.GetConnectionString("defaultConnection")));
             var cadenaConexionSqlConfiguracion = new AccesoDatos(configRoot.GetConnectionString("defaultConnection"));
