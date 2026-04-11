@@ -18,4 +18,6 @@ public partial class AperturaCampanaElectoral
     public int Usuario { get; set; }
 
     public DateTime FechaRegistro { get; set; }
+
+    public virtual ICollection<Evento> Eventos { get; set; } = new List<Evento>();
 }

@@ -14,9 +14,10 @@ namespace Backend.DTOs.Usuario
         public string occupation { get; set; } = null!;
         public string companyName { get; set; } = null!;
         public string phone { get; set; } = null!;
-        public int entidad   { get; set; }
-        public int sucursal {  get; set; }
+        public int entidad { get; set; }
+        public int sucursal { get; set; }
         public string ruta { get; set; } = null!;
+        public int rol { get; set; }
 
     }
 }

@@ -22,11 +22,17 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Departamento> Departamentos { get; set; }
 
+    public virtual DbSet<DetalleEvento> DetalleEventos { get; set; }
+
+    public virtual DbSet<DetalleEventoDocumento> DetalleEventoDocumentos { get; set; }
+
     public virtual DbSet<DetalleUsuarioCuadrilla> DetalleUsuarioCuadrillas { get; set; }
 
     public virtual DbSet<Empresa> Empresas { get; set; }
 
     public virtual DbSet<EncabezadoCuadrilla> EncabezadoCuadrillas { get; set; }
+
+    public virtual DbSet<Evento> Eventos { get; set; }
 
     public virtual DbSet<Municipio> Municipios { get; set; }
 
@@ -79,6 +85,42 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Descripcion).HasMaxLength(50);
         });
 
+        modelBuilder.Entity<DetalleEvento>(entity =>
+        {
+            entity.HasKey(e => e.Codigo);
+
+            entity.ToTable("DetalleEvento");
+
+            entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
+            entity.HasOne(d => d.EventoNavigation).WithMany(p => p.DetalleEventos)
+                .HasForeignKey(d => d.Evento)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DetalleEvento_Evento");
+
+            entity.HasOne(d => d.TipoCuadrillaNavigation).WithMany(p => p.DetalleEventos)
+                .HasForeignKey(d => d.TipoCuadrilla)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DetalleEvento_TipoCuadrilla");
+
+            entity.HasOne(d => d.UsuarioNavigation).WithMany(p => p.DetalleEventos)
+                .HasForeignKey(d => d.Usuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DetalleEvento_Usuario");
+        });
+
+        modelBuilder.Entity<DetalleEventoDocumento>(entity =>
+        {
+            entity.HasKey(e => e.Codigo);
+
+            entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
+            entity.HasOne(d => d.DetalleEventoNavigation).WithMany(p => p.DetalleEventoDocumentos)
+                .HasForeignKey(d => d.DetalleEvento)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DetalleEventoDocumentos_DetalleEvento");
+        });
+
         modelBuilder.Entity<DetalleUsuarioCuadrilla>(entity =>
         {
             entity.HasKey(e => e.Codigo);
@@ -119,7 +161,27 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Codigo);
 
             entity.ToTable("EncabezadoCuadrilla");
+
             entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<Evento>(entity =>
+        {
+            entity.HasKey(e => e.Codigo);
+
+            entity.ToTable("Evento");
+
+            entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
+            entity.HasOne(d => d.AperturaCampanaElectoralNavigation).WithMany(p => p.Eventos)
+                .HasForeignKey(d => d.AperturaCampanaElectoral)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Evento_AperturaCampanaElectoral");
+
+            entity.HasOne(d => d.UsuarioNavigation).WithMany(p => p.Eventos)
+                .HasForeignKey(d => d.Usuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Evento_Usuario");
         });
 
         modelBuilder.Entity<Municipio>(entity =>

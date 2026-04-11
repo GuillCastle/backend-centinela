@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NetTopologySuite.Geometries;
 
 namespace Backend.Models;
 
@@ -14,4 +15,6 @@ public partial class Municipio
     public string CodigoPostal { get; set; } = null!;
 
     public string? CodigoDpi { get; set; }
+
+    public Geometry? PuntoGeografico { get; set; }
 }

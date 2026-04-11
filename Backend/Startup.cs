@@ -34,6 +34,7 @@ using Backend.Repositorios.Reportes.ReportesApertura;
 using Backend.Repositorios.EmpresaSucursal;
 using Backend.Repositorios.AperturaCampanaElectoral;
 using Backend.Repositorios.Cuadrillas;
+using Backend.Repositorios.Evento;
 
 
 
@@ -66,8 +67,13 @@ namespace Backend
             services.AddScoped<IRepositorioEmpresaSucursal, RepositorioEmpresaSucursal>();
             services.AddScoped<IRepositorioAperturaCampanaElectoral, RepositorioAperturaCampanaElectoral>();
             services.AddScoped<IRepositorioCuadrillas, RepositorioCuadrillas>();
+            services.AddScoped<IRepositorioEvento, RepositorioEvento>();
             services.AddAutoMapper(typeof(Startup));
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configRoot.GetConnectionString("defaultConnection")));
+            services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(
+                configRoot.GetConnectionString("defaultConnection"),
+                x => x.UseNetTopologySuite()
+            ));
             var cadenaConexionSqlConfiguracion = new AccesoDatos(configRoot.GetConnectionString("defaultConnection"));
             services.AddSingleton(cadenaConexionSqlConfiguracion);
 
@@ -139,7 +145,7 @@ namespace Backend
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                Path.Combine(@"E:\imagenesCastillo")),
+                Path.Combine(@"D:\imagenesCastillo")),
                 RequestPath = "/uploads"
             });
 

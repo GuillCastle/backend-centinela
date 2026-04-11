@@ -2,6 +2,7 @@
 using Backend.DTOs;
 using Backend.DTOs.AperturaCampanaElectoral;
 using Backend.DTOs.Cuadrillas;
+using Backend.DTOs.Evento;
 using Backend.DTOs.Rol;
 
 using Backend.DTOs.Usuario;
@@ -39,6 +40,9 @@ namespace Backend.Utilidades
 
             CreateMap<EncabezadoCuadrilla, CreacionEncabezadoCuadrillaDTO>().ReverseMap();
             CreateMap<DetalleUsuarioCuadrilla, CreacionDetalleCuadrillaDTO>().ReverseMap();
+
+            CreateMap<Evento, CreacionEventoDTO>().ReverseMap();
+            CreateMap<DetalleEvento, CreacionDetalleEventoDTO>().ReverseMap();
 
 
         }

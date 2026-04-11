@@ -573,7 +573,9 @@ namespace Backend.Repositorios.Usuarios
                                        email = concepto.CorreoElectronico,
                                        entidad = concepto.Entidad ?? 0,
                                        sucursal = concepto.Sucursal ?? 0,
-                                       ruta = concepto.Foto
+                                       ruta = concepto.Foto,
+                                       rol = concepto.Rol
+
 
 
                                    }).FirstOrDefaultAsync();

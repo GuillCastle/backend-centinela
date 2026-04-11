@@ -11,5 +11,7 @@ public partial class TipoCuadrilla
 
     public int Estado { get; set; }
 
+    public virtual ICollection<DetalleEvento> DetalleEventos { get; set; } = new List<DetalleEvento>();
+
     public virtual ICollection<DetalleUsuarioCuadrilla> DetalleUsuarioCuadrillas { get; set; } = new List<DetalleUsuarioCuadrilla>();
 }
