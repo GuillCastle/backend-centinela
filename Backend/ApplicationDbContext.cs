@@ -50,6 +50,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<TipoCuadrilla> TipoCuadrillas { get; set; }
 
+    public virtual DbSet<TipoEvento> TipoEventos { get; set; }
+
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
     public virtual DbSet<UsuarioPermiso> UsuarioPermisos { get; set; }
@@ -178,6 +180,10 @@ public partial class ApplicationDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Evento_AperturaCampanaElectoral");
 
+            entity.HasOne(d => d.TipoEventoNavigation).WithMany(p => p.Eventos)
+                .HasForeignKey(d => d.TipoEvento)
+                .HasConstraintName("FK_Evento_TipoEvento");
+
             entity.HasOne(d => d.UsuarioNavigation).WithMany(p => p.Eventos)
                 .HasForeignKey(d => d.Usuario)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -274,6 +280,15 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Codigo);
 
             entity.ToTable("TipoCuadrilla");
+        });
+
+        modelBuilder.Entity<TipoEvento>(entity =>
+        {
+            entity.HasKey(e => e.Codigo).HasName("PK_Table_1");
+
+            entity.ToTable("TipoEvento");
+
+            entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<Usuario>(entity =>

@@ -3,13 +3,15 @@ using Backend.DTOs.Shared;
 using Backend.DTOs.Utils;
 using Backend.Entidades;
 using Backend.Repositorios.Shared;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers.Shared
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class SharedController : ControllerBase
     {
         private readonly IRepositorioShared repositorioShared;

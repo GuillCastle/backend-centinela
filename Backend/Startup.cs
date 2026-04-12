@@ -35,6 +35,7 @@ using Backend.Repositorios.EmpresaSucursal;
 using Backend.Repositorios.AperturaCampanaElectoral;
 using Backend.Repositorios.Cuadrillas;
 using Backend.Repositorios.Evento;
+using Backend.Repositorios.TipoEvento;
 
 
 
@@ -68,6 +69,7 @@ namespace Backend
             services.AddScoped<IRepositorioAperturaCampanaElectoral, RepositorioAperturaCampanaElectoral>();
             services.AddScoped<IRepositorioCuadrillas, RepositorioCuadrillas>();
             services.AddScoped<IRepositorioEvento, RepositorioEvento>();
+            services.AddScoped<IRepositorioTipoEvento, RepositorioTipoEvento>();
             services.AddAutoMapper(typeof(Startup));
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(
@@ -145,7 +147,7 @@ namespace Backend
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                Path.Combine(@"D:\imagenesCastillo")),
+                Path.Combine(@"E:\imagenesCastillo")),
                 RequestPath = "/uploads"
             });
 

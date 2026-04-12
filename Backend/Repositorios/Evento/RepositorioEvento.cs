@@ -59,6 +59,7 @@ namespace Backend.Repositorios.Evento
                     Encabezado.PuntoGeografico = municipio.PuntoGeografico;
                     Encabezado.Departamento = Creacion.Departamento;
                     Encabezado.Municipio = Creacion.Municipio;
+                    Encabezado.TipoEvento = Creacion.TipoEvento;
                     context.Add(Encabezado);
                     await context.SaveChangesAsync();
 
@@ -274,6 +275,72 @@ namespace Backend.Repositorios.Evento
 
 
                 return evento;
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult(JObject.Parse(ex.Message.ToString()));
+            }
+        }
+
+        public async Task<ActionResult<EventoGeneralDTO>> obtenereventodetalle(int evento)
+        {
+            try
+            {
+                var even = await context.Eventos
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Codigo == evento);
+
+                if (even == null)
+                {
+                    return new ObjectResult(new { message = "Evento no encontrado" });
+                }
+
+                var detalleeven = await context.DetalleEventos
+                    .AsNoTracking()
+                    .Where(x => x.Evento == evento)
+                    .ToListAsync();
+
+                var detalleIds = detalleeven.Select(x => x.Codigo).ToList();
+
+                var documentos = await context.DetalleEventoDocumentos
+                    .AsNoTracking()
+                    .Where(x => detalleIds.Contains(x.DetalleEvento))
+                    .ToListAsync();
+
+                var eventoGenerado = new EventoGeneralDTO
+                {
+                    EncabezadoEvento = new EventoIdDTO
+                    {
+                        Codigo = even.Codigo,
+                        Descripcion = even.Descripcion,
+                        Estado = even.Estado,
+                        Usuario = even.Usuario,
+                        FechaRegistro = even.FechaRegistro,
+                        AperturaCampanaElectoral = even.AperturaCampanaElectoral,
+                        Departamento = even.Departamento,
+                        Municipio = even.Municipio,
+                        TipoEvento = even.TipoEvento
+                    },
+                    DetalleEventoGenerado = detalleeven.Select(x => new DetalleEventoDTO
+                    {
+                        Codigo = x.Codigo,
+                        Evento = x.Evento,
+                        Descripcion = x.Descripcion,
+                        Usuario = x.Usuario,
+                        FechaRegistro = x.FechaRegistro,
+                        TipoCuadrilla = x.TipoCuadrilla
+                    }).ToList(),
+                    DetalleDocumentoGenerado = documentos.Select(x => new DetalleEventoDocumentoDTO
+                    {
+                        Codigo = x.Codigo,
+                        DetalleEvento = x.DetalleEvento,
+                        Url = x.Url,
+                        Estado = x.Estado,
+                        FechaRegistro = x.FechaRegistro
+                    }).ToList()
+                };
+
+                return eventoGenerado;
             }
             catch (Exception ex)
             {

@@ -85,6 +85,19 @@ namespace Backend.Controllers.Evento
                 return BadRequest(ex.Message);
             }
         }
-        
+
+        [HttpGet("obtenereventodetalle/{evento:int}")]
+        public async Task<ActionResult<EventoGeneralDTO>> obtenereventodetalle(int evento)
+        {
+            try
+            {
+                return await _repositorioEvento.obtenereventodetalle(evento);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

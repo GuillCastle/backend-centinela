@@ -24,9 +24,13 @@ public partial class Evento
 
     public Geometry? PuntoGeografico { get; set; }
 
+    public int? TipoEvento { get; set; }
+
     public virtual AperturaCampanaElectoral AperturaCampanaElectoralNavigation { get; set; } = null!;
 
     public virtual ICollection<DetalleEvento> DetalleEventos { get; set; } = new List<DetalleEvento>();
+
+    public virtual TipoEvento? TipoEventoNavigation { get; set; }
 
     public virtual Usuario UsuarioNavigation { get; set; } = null!;
 }
