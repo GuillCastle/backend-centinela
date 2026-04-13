@@ -6,7 +6,10 @@ namespace Backend.Repositorios.Evento
 {
     public interface IRepositorioEvento
     {
+        Task<ActionResult<EncabezadoDatos>> delete(int codigo);
         Task<IActionResult> descargararchivo(long id);
+        Task<ActionResult<EncabezadoDatos>> insertarsolodetalleevento([FromBody] CreacionDetalleEventoDTO Creacion);
+        Task<ActionResult<EncabezadoDatos>> insertarsolodetalleeventoadministrador([FromForm] CreacionEventoGeneralAdministradorDTO Creacion);
         Task<ActionResult<EventoGeneralDTO>> obtenereventodetalle(int evento);
         Task<ActionResult<List<EventoDTO>>> obtenereventousuarioadministrador(int usuario);
         Task<ActionResult<List<EventoDTO>>> obtenereventousuariocentinela(int usuario);

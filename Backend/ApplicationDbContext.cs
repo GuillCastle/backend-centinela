@@ -36,6 +36,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Municipio> Municipios { get; set; }
 
+    public virtual DbSet<Notificacion> Notificacions { get; set; }
+
     public virtual DbSet<Pai> Pais { get; set; }
 
     public virtual DbSet<Permiso> Permisos { get; set; }
@@ -201,6 +203,18 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnName("CodigoDPI");
             entity.Property(e => e.CodigoPostal).HasMaxLength(50);
             entity.Property(e => e.Descripcion).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<Notificacion>(entity =>
+        {
+            entity.HasKey(e => e.Codigo);
+
+            entity.ToTable("Notificacion");
+
+            entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+            entity.Property(e => e.Mensaje).HasMaxLength(1000);
+            entity.Property(e => e.Tipo).HasMaxLength(100);
+            entity.Property(e => e.Titulo).HasMaxLength(200);
         });
 
         modelBuilder.Entity<Pai>(entity =>

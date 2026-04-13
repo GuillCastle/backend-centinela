@@ -12,7 +12,7 @@ namespace Backend.Controllers.Evento
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class EventoController : ControllerBase
     {
         private readonly IRepositorioEvento _repositorioEvento;
@@ -98,6 +98,44 @@ namespace Backend.Controllers.Evento
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPost("insertarsolodetalleevento")]
+        public async Task<ActionResult<EncabezadoDatos>> insertarsolodetalleevento([FromBody] CreacionDetalleEventoDTO creacion)
+        {
+            try
+            {
+                return await _repositorioEvento.insertarsolodetalleevento(creacion);
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult(new { message = ex.Message.ToString() });
+            }
+        }
 
+        [HttpPost("insertarsolodetalleeventoadministrador")]
+        public async Task<ActionResult<EncabezadoDatos>> insertarsolodetalleeventoadministrador([FromForm] CreacionEventoGeneralAdministradorDTO creacion)
+        {
+
+            try
+            {
+                return await _repositorioEvento.insertarsolodetalleeventoadministrador(creacion);
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult(new { message = ex.Message.ToString() });
+            }
+        }
+
+        [HttpDelete("{codigo:int}")]
+        public async Task<ActionResult<EncabezadoDatos>> delete(int codigo)
+        {
+            try
+            {
+                return await _repositorioEvento.delete(codigo);
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult(new { message = ex.Message.ToString() });
+            }
+        }
     }
 }

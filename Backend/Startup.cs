@@ -36,6 +36,7 @@ using Backend.Repositorios.AperturaCampanaElectoral;
 using Backend.Repositorios.Cuadrillas;
 using Backend.Repositorios.Evento;
 using Backend.Repositorios.TipoEvento;
+using Backend.Hubs;
 
 
 
@@ -80,6 +81,37 @@ namespace Backend
             services.AddSingleton(cadenaConexionSqlConfiguracion);
 
 
+
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            //{
+            //    options.RequireHttpsMetadata = false;
+            //    options.SaveToken = true;
+            //    options.TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateIssuerSigningKey = true,
+            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configRoot.GetValue<string>("llavejwt"))),
+            //        ValidateIssuer = false,
+            //        ValidateAudience = false
+            //    };
+            //    options.Events = new JwtBearerEvents
+            //    {
+            //        OnMessageReceived = context =>
+            //        {
+            //            var accessToken = context.Request.Query["access_token"];
+
+            //            var path = context.HttpContext.Request.Path;
+
+            //            if (!string.IsNullOrEmpty(accessToken) &&
+            //                path.StartsWithSegments("/hubs/notificaciones"))
+            //            {
+            //                context.Token = accessToken;
+            //            }
+
+            //            return Task.CompletedTask;
+            //        }
+            //    };
+            //});
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
@@ -87,11 +119,33 @@ namespace Backend
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configRoot.GetValue<string>("llavejwt"))),
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(configRoot.GetValue<string>("llavejwt"))
+                    ),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            path.StartsWithSegments("/hubs/notificaciones"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
+
+            services.AddSignalR();
+
             //services.AddResponseCaching();
             services.AddControllers(options =>
             {
@@ -110,7 +164,8 @@ namespace Backend
                 {
                     policy.WithOrigins(allowedOrigins)
                           .AllowAnyHeader()
-                          .AllowAnyMethod();
+                          .AllowAnyMethod()
+                          .AllowCredentials(); ;
                 });
             });
 
@@ -122,7 +177,7 @@ namespace Backend
             //var PostgreSQLConnectionConfiguration = new PostgreSQLConfiguration(configRoot.GetConnectionString("PostgreSQL"));
             //services.AddSingleton(PostgreSQLConnectionConfiguration);
             //services.AddScoped<IRepositorioPrueba, RepositorioPrueba>();
-
+            services.AddSignalR();
 
         }
         public void Configure(WebApplication app, IWebHostEnvironment env)
@@ -147,7 +202,7 @@ namespace Backend
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                Path.Combine(@"E:\imagenesCastillo")),
+                Path.Combine(@"D:\imagenesCastillo")),
                 RequestPath = "/uploads"
             });
 
@@ -164,6 +219,8 @@ namespace Backend
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                endpoints.MapHub<NotificacionHub>("/hubs/notificaciones"); // 👈 AQUÍ
             });
             app.Run();
         }
