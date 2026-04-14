@@ -11,5 +11,6 @@ namespace Backend.Repositorios.AperturaCampanaElectoral
         Task<ActionResult<Entidades.AperturaCampanaElectoral>> getid(int codigo);
         Task<ActionResult<EncabezadoDatos>> post([FromBody] CreacionAperturaCampanaElectoralDTO Creacion);
         Task<ActionResult<EncabezadoDatos>> put(int codigo, [FromBody] CreacionAperturaCampanaElectoralDTO Edicion);
+        Task<ActionResult<List<SelectFormulario>>> selectapertura();
     }
 }

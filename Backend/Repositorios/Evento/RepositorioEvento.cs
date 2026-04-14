@@ -157,7 +157,7 @@ namespace Backend.Repositorios.Evento
                             Usuario = supervisor,
                             Titulo = tituloNotificacion,
                             Mensaje = mensajeNotificacion,
-                            Tipo = "EVENTO_NUEVO",
+                            Tipo = "2",
                             Evento = Encabezado.Codigo,
                             Estado = 1,
                             Leida = 0,
@@ -180,7 +180,7 @@ namespace Backend.Repositorios.Evento
                             {
                                 titulo = tituloNotificacion,
                                 mensaje = mensajeNotificacion,
-                                tipo = "EVENTO_NUEVO",
+                                tipo = "2",
                                 referenciaId = Encabezado.Codigo,
                                 fechaRegistro = DateTime.Now
                             });
@@ -439,6 +439,7 @@ namespace Backend.Repositorios.Evento
             {
                 try
                 {
+
                     var evento = await context.Eventos
                     .FirstOrDefaultAsync(x => x.Codigo == Creacion.Evento);
 
@@ -447,6 +448,16 @@ namespace Backend.Repositorios.Evento
                         return new NotFoundObjectResult(new { message = "No se encontró el evento" });
                     }
 
+                    var existe = await context.DetalleEventos
+                    .AnyAsync(x =>
+                        x.Evento == Creacion.Evento &&
+                        x.TipoCuadrilla == 2
+                    );
+
+                    if (existe)
+                    {
+                        return new ObjectResult(new { message = "Ya se cuenta con una respuesta a nivel de un supervisor" });
+                    }
                     evento.Estado = 2;
                     await context.SaveChangesAsync();
 
@@ -454,6 +465,53 @@ namespace Backend.Repositorios.Evento
                     var Detalle = mapper.Map<Entidades.DetalleEvento>(Creacion);
                     context.Add(Detalle);
                     await context.SaveChangesAsync();
+
+                    //quita las anteriores notificaciones 
+
+                    var notificacionesSupervisor = await context.Notificacions
+                    .Where(x =>
+                        x.Evento == Creacion.Evento &&
+                        x.Tipo == "2" &&
+                        x.Estado == 1 &&
+                        x.Leida == 0
+                    )
+                    .ToListAsync();
+
+                    foreach (var notificacion in notificacionesSupervisor)
+                    {
+                        notificacion.Leida = 1;
+                        // si quieres también inactivarla:
+                        // notificacion.Estado = 0;
+                    }
+
+                    await context.SaveChangesAsync();
+
+                    //ahora para todos lo susuario administradores se notifica
+                    var usuariosRol2 = await context.Usuarios
+                   .Where(x => x.Rol == 2 && x.Estado == 1)
+                   .Select(x => x.Codigo)
+                   .ToListAsync();
+
+                    // 3. Crear nuevas notificaciones para rol 2
+                    foreach (var usuario in usuariosRol2)
+                    {
+                        var nuevaNotificacion = new Entidades.Notificacion
+                        {
+                            Usuario = usuario,
+                            Titulo = "Evento respondido por supervisor",
+                            Mensaje = $"El evento con código {Creacion.Evento} ya fue respondido por un supervisor.",
+                            Tipo = "3",
+                            Evento = Creacion.Evento,
+                            Estado = 1,
+                            Leida = 0,
+                            FechaRegistro = DateTime.Now
+                        };
+
+                        context.Add(nuevaNotificacion);
+                    }
+
+                    await context.SaveChangesAsync();
+
                     await transaction.CommitAsync();
                     EncabezadoDatos datos = new EncabezadoDatos();
                     datos.id = int.Parse(Detalle.Codigo.ToString());
@@ -482,6 +540,18 @@ namespace Backend.Repositorios.Evento
                     {
                         return new NotFoundObjectResult(new { message = "No se encontró el evento" });
                     }
+
+                    var existe = await context.DetalleEventos
+                    .AnyAsync(x =>
+                        x.Evento == Creacion.DetalleEvento.Evento &&
+                        x.TipoCuadrilla == 3
+                    );
+
+                    if (existe)
+                    {
+                        return new ObjectResult(new { message = "Ya se cuenta con una respuesta a nivel de un administrador" });
+                    }
+
 
                     evento.Estado = 3;
                     await context.SaveChangesAsync();
@@ -543,6 +613,52 @@ namespace Backend.Repositorios.Evento
                         await context.SaveChangesAsync();
                     }
 
+                    var notificacionesAdministrador = await context.Notificacions
+                    .Where(x =>
+                        x.Evento == Creacion.DetalleEvento.Evento &&
+                        x.Tipo == "3" &&
+                        x.Estado == 1 &&
+                        x.Leida == 0
+                    )
+                    .ToListAsync();
+
+                    foreach (var notificacion in notificacionesAdministrador)
+                    {
+                        notificacion.Leida = 1;
+                        // si quieres también inactivarla:
+                        // notificacion.Estado = 0;
+                    }
+
+                    await context.SaveChangesAsync();
+
+                    var usuariosRol = await context.Usuarios
+                    .Where(x =>
+                        x.Estado == 1 &&
+                        x.Codigo != Creacion.DetalleEvento.Usuario &&
+                        x.Codigo != 1
+                    )
+                    .Select(x => x.Codigo)
+                    .ToListAsync();
+
+                    // 3. Crear nuevas notificaciones para rol 2
+                    foreach (var usuario in usuariosRol)
+                    {
+                        var nuevaNotificacion = new Entidades.Notificacion
+                        {
+                            Usuario = usuario,
+                            Titulo = "Evento respondido por administrador",
+                            Mensaje = $"El evento con código {Creacion.DetalleEvento.Evento} ya fue respondido por un Administrador.",
+                            Tipo = "1",
+                            Evento = Creacion.DetalleEvento.Evento,
+                            Estado = 1,
+                            Leida = 0,
+                            FechaRegistro = DateTime.Now
+                        };
+
+                        context.Add(nuevaNotificacion);
+                    }
+
+                    await context.SaveChangesAsync();
 
                     await transaction.CommitAsync();
                     EncabezadoDatos datos = new EncabezadoDatos();
@@ -576,6 +692,25 @@ namespace Backend.Repositorios.Evento
                 apertura.Estado = 0;
                 await context.SaveChangesAsync();
 
+                var notificacionesAdministrador = await context.Notificacions
+                    .Where(x =>
+                        x.Evento == codigo &&
+                        x.Tipo == "3" &&
+                        x.Estado == 1 &&
+                        x.Leida == 0
+                    )
+                    .ToListAsync();
+
+                foreach (var notificacion in notificacionesAdministrador)
+                {
+                    notificacion.Estado = 0;
+                    // si quieres también inactivarla:
+                    // notificacion.Estado = 0;
+                }
+
+                await context.SaveChangesAsync();
+
+
                 transaction.Commit();
                 EncabezadoDatos datos = new EncabezadoDatos();
                 datos.id = codigo;
@@ -596,6 +731,47 @@ namespace Backend.Repositorios.Evento
                 }
             }
         }
+
+        public async Task<ActionResult<List<EventoDTO>>> obtenereventofinalizados()
+        {
+            try
+            {
+
+                List<EventoDTO> evento = await (from eventos in context.Eventos
+                                                join usuarios in context.Usuarios on eventos.Usuario equals usuarios.Codigo
+                                                where eventos.Estado == 3
+                                                orderby eventos.Codigo descending
+
+                                                select new
+                                                {
+                                                    Codigo = eventos.Codigo,
+                                                    Descripcion = eventos.Descripcion,
+                                                    Usuario = usuarios.Nombre,
+                                                    Estado =
+                                                        eventos.Estado == 1 ? "Enviado al Supervisor" :
+                                                        eventos.Estado == 2 ? "Enviado al Administrador" :
+                                                        eventos.Estado == 3 ? "Finalizado y con Respuesta"
+                                                        : "Inactivo",
+                                                    FechaRegistro = eventos.FechaRegistro,
+                                                }).Select(concepto => new EventoDTO
+                                                {
+                                                    Codigo = concepto.Codigo,
+                                                    Descripcion = concepto.Descripcion,
+                                                    Usuario = concepto.Usuario,
+                                                    Estado = concepto.Estado,
+                                                    FechaRegistro = concepto.FechaRegistro,
+                                                }).ToListAsync();
+
+
+
+                return evento;
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult(JObject.Parse(ex.Message.ToString()));
+            }
+        }
+
         private string ObtenerContentType(string rutaArchivo)
         {
             var extension = Path.GetExtension(rutaArchivo).ToLowerInvariant();

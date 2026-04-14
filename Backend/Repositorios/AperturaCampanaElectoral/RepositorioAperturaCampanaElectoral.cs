@@ -192,5 +192,28 @@ namespace Backend.Repositorios.AperturaCampanaElectoral
             }
         }
 
+        public async Task<ActionResult<List<SelectFormulario>>> selectapertura()
+        {
+            try
+            {
+                List<SelectFormulario> entity = await (from aperturacamapana in context.AperturaCampanaElectorals
+                                                                  select new
+                                                                  {
+                                                                      Codigo = aperturacamapana.Codigo,
+                                                                      Descripcion = aperturacamapana.Descripcion,
+                                                                  }).Select(concepto => new SelectFormulario
+                                                                  {
+                                                                      codigo = concepto.Codigo,
+                                                                      descripcion = concepto.Descripcion,
+                                                                  }).ToListAsync();
+
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult(JObject.Parse(ex.Message.ToString()));
+            }
+        }
+
     }
 }

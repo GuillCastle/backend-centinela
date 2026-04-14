@@ -95,5 +95,18 @@ namespace Backend.Controllers.AperturaCampanaElectoral
             }
         }
 
+        [HttpGet("selectapertura/{codigo:int}")]
+        public async Task<ActionResult<List<SelectFormulario>>> selectapertura()
+        {
+            try
+            {
+                return await _repositorioCampana.selectapertura();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

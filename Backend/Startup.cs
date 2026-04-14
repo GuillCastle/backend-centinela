@@ -37,6 +37,7 @@ using Backend.Repositorios.Cuadrillas;
 using Backend.Repositorios.Evento;
 using Backend.Repositorios.TipoEvento;
 using Backend.Hubs;
+using Backend.Repositorios.Mapas;
 
 
 
@@ -71,6 +72,7 @@ namespace Backend
             services.AddScoped<IRepositorioCuadrillas, RepositorioCuadrillas>();
             services.AddScoped<IRepositorioEvento, RepositorioEvento>();
             services.AddScoped<IRepositorioTipoEvento, RepositorioTipoEvento>();
+            services.AddScoped<IRepositorioMapas, RepositorioMapas>();
             services.AddAutoMapper(typeof(Startup));
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(
@@ -202,7 +204,7 @@ namespace Backend
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                Path.Combine(@"D:\imagenesCastillo")),
+                Path.Combine(@"E:\imagenesCastillo")),
                 RequestPath = "/uploads"
             });
 

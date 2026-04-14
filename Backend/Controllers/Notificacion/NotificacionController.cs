@@ -48,27 +48,30 @@ namespace Backend.Controllers.Notificacion
             }
         }
 
-        [HttpPut("marcarleida/{id}")]
-        public async Task<IActionResult> MarcarLeida(long id)
+        [HttpPut("marcarleida/{id}/{evento}")]
+        public async Task<IActionResult> MarcarLeida(long id, int evento)
         {
             try
             {
+
                 var notificacion = await context.Notificacions
-                    .FirstOrDefaultAsync(x => x.Codigo == id && x.Estado == 1);
+                    .FirstOrDefaultAsync(x => x.Usuario == id && x.Estado == 1
+                    && x.Leida == 0 && x.Tipo == "1" && x.Evento == evento
+                    );
 
                 if (notificacion == null)
                 {
-                    return new NotFoundObjectResult(new { message = "No se encontró la notificación" });
+                    return Ok(new { mensaje = "1" });
                 }
 
                 notificacion.Leida = 1;
                 await context.SaveChangesAsync();
 
-                return Ok(new { message = "1" });
+                return Ok(new { mensaje = "1" });
             }
             catch (Exception ex)
             {
-                return new ObjectResult(new { message = ex.Message });
+                return new ObjectResult(new { mensaje = ex.Message });
             }
         }
     }

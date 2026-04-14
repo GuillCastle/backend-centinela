@@ -137,5 +137,19 @@ namespace Backend.Controllers.Evento
                 return new ObjectResult(new { message = ex.Message.ToString() });
             }
         }
+
+        [HttpGet("obtenereventofinalizados")]
+        public async Task<ActionResult<List<EventoDTO>>> obtenereventofinalizados()
+        {
+            try
+            {
+                return await _repositorioEvento.obtenereventofinalizados();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }
